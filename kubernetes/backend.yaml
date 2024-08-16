@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeserver
+  namespace: fullstack-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodeserver
+  template:
+    metadata:
+      labels:
+        app: nodeserver
+    spec:
+      containers:
+      - name: nodeserver
+        image: balajdocker/backend:latest
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: config
+        env:
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MONGODB_URI
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fullstack-app
+  name: backend-service
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  selector:
+    app: nodeserver

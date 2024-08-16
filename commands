@@ -1,0 +1,16 @@
+kubectl create namespace fullstack-app
+kubectl apply -f configmaps.yaml
+kubectl apply -f secrets.yaml
+kubectl apply -f pv-and-pvc.yaml
+kubectl apply -f db.yaml
+
+kubectl get deployments -n fullstack-app
+kubectl get services -n fullstack-app
+
+kubectl apply -f backend.yaml
+kubectl apply -f frontend.yaml
+
+sudo apt update; sudo apt install -y socat;
+kubectl port-forward deployment/nodeserver 8000:8000
+kubectl port-forward deployment/nodeserver 8000:8000 -n fullstack-app
+socat TCP-LISTEN:3000,fork,reuseaddr TCP:192.168.49.2:31000
